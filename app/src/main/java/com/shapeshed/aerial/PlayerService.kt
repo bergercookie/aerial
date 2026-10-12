@@ -329,6 +329,35 @@ class PlayerService : MediaLibraryService() {
         override fun onConnectAsync(
             session: MediaSession,
             controller: MediaSession.ControllerInfo,
+        ): ListenableFuture<MediaSession.ConnectionResult> {
+            log(
+                "onConnect pkg=${controller.packageName} uid=${controller.uid} " +
+                    "trusted=${controller.isTrusted} version=${controller.controllerVersion}",
+            )
+            return connectionResult(session, controller)
+        }
+
+        override fun onPlayerCommandRequest(
+            session: MediaSession,
+            controller: MediaSession.ControllerInfo,
+            playerCommand: Int,
+        ): Int {
+            log("onPlayerCommandRequest pkg=${controller.packageName} command=$playerCommand")
+            return super.onPlayerCommandRequest(session, controller, playerCommand)
+        }
+
+        override fun onMediaButtonEvent(
+            session: MediaSession,
+            controllerInfo: MediaSession.ControllerInfo,
+            intent: Intent,
+        ): Boolean {
+            log("onMediaButtonEvent pkg=${controllerInfo.packageName} intent=$intent")
+            return super.onMediaButtonEvent(session, controllerInfo, intent)
+        }
+
+        private fun connectionResult(
+            session: MediaSession,
+            controller: MediaSession.ControllerInfo,
         ): ListenableFuture<MediaSession.ConnectionResult> = Futures.immediateFuture(
             MediaSession.ConnectionResult.AcceptedResultBuilder(session, controller)
                 .setAvailableSessionCommands(
