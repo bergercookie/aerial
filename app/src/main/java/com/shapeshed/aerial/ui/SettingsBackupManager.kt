@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import com.shapeshed.aerial.data.AUTO_PLAY_LAST_STATION_KEY
 import com.shapeshed.aerial.data.SHOW_HOME_KEY
 import com.shapeshed.aerial.data.SHOW_STREAM_BITRATE_KEY
 import com.shapeshed.aerial.data.Station
@@ -96,6 +97,7 @@ class ZipSettingsBackupManager(
             val settings = JSONObject()
                 .put("showStreamBitrate", preferences[SHOW_STREAM_BITRATE_KEY] ?: false)
                 .put("showHome", preferences[SHOW_HOME_KEY] ?: true)
+                .put("autoPlayLastStation", preferences[AUTO_PLAY_LAST_STATION_KEY] ?: false)
             val manifest = JSONObject()
                 .put("version", BACKUP_VERSION)
                 .put("app", "Aerial")
@@ -177,6 +179,9 @@ class ZipSettingsBackupManager(
                 }
                 if (settings.has("showHome")) {
                     preferences[SHOW_HOME_KEY] = settings.optBoolean("showHome")
+                }
+                if (settings.has("autoPlayLastStation")) {
+                    preferences[AUTO_PLAY_LAST_STATION_KEY] = settings.optBoolean("autoPlayLastStation")
                 }
             }
         }

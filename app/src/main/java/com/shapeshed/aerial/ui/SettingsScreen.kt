@@ -21,6 +21,7 @@ import androidx.compose.material.icons.rounded.FileDownload
 import androidx.compose.material.icons.rounded.FileUpload
 import androidx.compose.material.icons.rounded.GraphicEq
 import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -103,10 +104,12 @@ fun SettingsScreen(viewModel: SettingsViewModel, onDismiss: () -> Unit, modifier
     SettingsContent(
         showStreamBitrate = loadedSettings.showStreamBitrate,
         showHome = loadedSettings.showHome,
+        autoPlayLastStation = loadedSettings.autoPlayLastStation,
         snackbarHostState = snackbarHostState,
         versionLabel = versionLabel,
         onShowStreamBitrateChange = viewModel::setShowStreamBitrate,
         onShowHomeChange = viewModel::setShowHome,
+        onAutoPlayLastStationChange = viewModel::setAutoPlayLastStation,
         onExport = { exportLauncher.launch("aerial-backup.zip") },
         onImport = { importLauncher.launch(arrayOf("application/zip", "application/octet-stream")) },
         onDismiss = onDismiss,
@@ -119,10 +122,12 @@ fun SettingsScreen(viewModel: SettingsViewModel, onDismiss: () -> Unit, modifier
 internal fun SettingsContent(
     showStreamBitrate: Boolean,
     showHome: Boolean,
+    autoPlayLastStation: Boolean,
     snackbarHostState: SnackbarHostState,
     versionLabel: String,
     onShowStreamBitrateChange: (Boolean) -> Unit,
     onShowHomeChange: (Boolean) -> Unit,
+    onAutoPlayLastStationChange: (Boolean) -> Unit,
     onExport: () -> Unit,
     onImport: () -> Unit,
     onDismiss: () -> Unit,
@@ -192,6 +197,21 @@ internal fun SettingsContent(
                         },
                     ) {
                         Text(stringResource(R.string.show_stream_bitrate))
+                    }
+                }
+                item(contentType = "setting") {
+                    ListItem(
+                        modifier = Modifier.clickable { onAutoPlayLastStationChange(!autoPlayLastStation) },
+                        leadingContent = { Icon(Icons.Rounded.PlayArrow, contentDescription = null) },
+                        supportingContent = { Text(stringResource(R.string.auto_play_last_station_desc)) },
+                        trailingContent = {
+                            Switch(
+                                checked = autoPlayLastStation,
+                                onCheckedChange = onAutoPlayLastStationChange,
+                            )
+                        },
+                    ) {
+                        Text(stringResource(R.string.auto_play_last_station))
                     }
                 }
                 // In-app language picker only for pre-Android-13; 13+ uses the system per-app setting.

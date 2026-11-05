@@ -107,10 +107,12 @@ class SettingsViewModelTest {
 
         viewModel.setShowHome(false)
         viewModel.setShowStreamBitrate(true)
+        viewModel.setAutoPlayLastStation(true)
         runCurrent()
 
         assertFalse(viewModel.settings.value!!.showHome)
         assertTrue(viewModel.settings.value!!.showStreamBitrate)
+        assertTrue(viewModel.settings.value!!.autoPlayLastStation)
     }
 
     @Test

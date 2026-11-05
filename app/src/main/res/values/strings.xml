@@ -135,6 +135,8 @@
     <string name="tab_favorites">Favorites</string>
     <string name="show_home">Show Home</string>
     <string name="show_home_desc">Show the Home tab and discovery folders alongside Favorites</string>
+    <string name="auto_play_last_station">Play last station on open</string>
+    <string name="auto_play_last_station_desc">Start playing the last station automatically when Aerial opens</string>
     <string name="sort_by">Sort by</string>
     <string name="sort_az">A to Z</string>
     <string name="sort_last_played">Last played</string>
