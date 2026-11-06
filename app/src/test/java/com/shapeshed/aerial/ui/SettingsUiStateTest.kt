@@ -2,6 +2,7 @@ package com.shapeshed.aerial.ui
 
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.mutablePreferencesOf
+import com.shapeshed.aerial.data.AUTO_PLAY_LAST_STATION_KEY
 import com.shapeshed.aerial.data.SHOW_HOME_KEY
 import com.shapeshed.aerial.data.SHOW_STREAM_BITRATE_KEY
 import org.junit.Assert.assertFalse
@@ -15,6 +16,7 @@ class SettingsUiStateTest {
 
         assertTrue(state.showHome)
         assertFalse(state.showStreamBitrate)
+        assertFalse(state.autoPlayLastStation)
     }
 
     @Test
@@ -22,11 +24,13 @@ class SettingsUiStateTest {
         val preferences = mutablePreferencesOf(
             SHOW_HOME_KEY to false,
             SHOW_STREAM_BITRATE_KEY to true,
+            AUTO_PLAY_LAST_STATION_KEY to true,
         )
 
         val state = settingsUiState(preferences)
 
         assertFalse(state.showHome)
         assertTrue(state.showStreamBitrate)
+        assertTrue(state.autoPlayLastStation)
     }
 }

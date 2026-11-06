@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.shapeshed.aerial.data.AUTO_PLAY_LAST_STATION_KEY
 import com.shapeshed.aerial.data.SHOW_HOME_KEY
 import com.shapeshed.aerial.data.SHOW_STREAM_BITRATE_KEY
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,6 +48,12 @@ class SettingsViewModel @Inject internal constructor(
         }
     }
 
+    fun setAutoPlayLastStation(enabled: Boolean) {
+        viewModelScope.launch {
+            dataStore.edit { it[AUTO_PLAY_LAST_STATION_KEY] = enabled }
+        }
+    }
+
     fun exportBackup(uri: Uri) {
         viewModelScope.launch {
             _backupResult.value = when (backupManager.export(uri)) {
@@ -73,6 +80,7 @@ class SettingsViewModel @Inject internal constructor(
 internal fun settingsUiState(preferences: Preferences): SettingsUiState = SettingsUiState(
     showStreamBitrate = preferences[SHOW_STREAM_BITRATE_KEY] ?: false,
     showHome = preferences[SHOW_HOME_KEY] ?: true,
+    autoPlayLastStation = preferences[AUTO_PLAY_LAST_STATION_KEY] ?: false,
 )
 
 sealed interface SettingsBackupResult {
@@ -85,5 +93,6 @@ sealed interface SettingsBackupResult {
 data class SettingsUiState(
     val showStreamBitrate: Boolean = false,
     val showHome: Boolean = true,
+    val autoPlayLastStation: Boolean = false,
     val backupResult: SettingsBackupResult? = null,
 )

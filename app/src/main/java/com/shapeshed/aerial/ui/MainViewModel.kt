@@ -24,6 +24,7 @@ import androidx.media3.session.SessionCommand
 import com.shapeshed.aerial.R
 import com.shapeshed.aerial.data.ACTION_SLEEP_TIMER_CANCEL
 import com.shapeshed.aerial.data.ACTION_SLEEP_TIMER_SET
+import com.shapeshed.aerial.data.AUTO_PLAY_LAST_STATION_KEY
 import com.shapeshed.aerial.data.FAVORITES_MANUAL_ORDER_KEY
 import com.shapeshed.aerial.data.FAVORITES_SORT_KEY
 import com.shapeshed.aerial.data.FavoritesSort
@@ -333,7 +334,7 @@ class MainViewModel @Inject constructor(
     val playbackUiState: StateFlow<PlaybackUiState> = _playbackUiState.asStateFlow()
     private var pendingPlaybackMetadata: PendingPlaybackMetadata? = null
 
-    // Carries the last-played station to loadStationPaused() once the MediaController connects.
+    // Carries the last-played station to loadRestoredStation() once the MediaController connects.
     // CompletableDeferred ensures the handoff is safe regardless of which side wins the race.
     private val pendingRestoreStation = CompletableDeferred<Station?>()
 
@@ -666,7 +667,10 @@ class MainViewModel @Inject constructor(
         }
         if (mediaController.currentMediaItem == null) {
             viewModelScope.launch {
-                pendingRestoreStation.await()?.let { loadStationPaused(it) }
+                pendingRestoreStation.await()?.let { station ->
+                    val autoPlay = dataStore.data.first()[AUTO_PLAY_LAST_STATION_KEY] ?: false
+                    loadRestoredStation(station, autoPlay)
+                }
             }
         }
     }
@@ -1033,7 +1037,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private suspend fun loadStationPaused(station: Station) {
+    private suspend fun loadRestoredStation(station: Station, autoPlay: Boolean = false) {
         // Prefer the exact timeline captured by the Media3 session. Legacy snapshots did not
         // include a queue, so only those fall back to rebuilding from the database and sort.
         val snapshot = playbackSnapshotStore.read()
@@ -1070,7 +1074,7 @@ class MainViewModel @Inject constructor(
                     }
                 }
                 mediaController.prepare()
-                mediaController.pause()
+                if (autoPlay) mediaController.play() else mediaController.pause()
             }
         }
     }
