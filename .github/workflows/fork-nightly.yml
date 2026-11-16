@@ -5,8 +5,8 @@ name: Fork Nightly
 # two never both run. It does NOT use the F-Droid buildserver image, so the
 # APK is not byte-reproducible (that only matters for F-Droid).
 #
-# Requires the AERIAL_KEYSTORE_BASE64, AERIAL_KEYSTORE_PASSWORD,
-# AERIAL_KEY_ALIAS and AERIAL_KEY_PASSWORD repository secrets.
+# Requires the ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD,
+# ANDROID_KEY_ALIAS and ANDROID_KEY_PASSWORD repository secrets.
 #
 # Scheduled workflows are disabled on forks until you enable Actions in the
 # fork's Actions tab. Use "Run workflow" to trigger a build manually.
@@ -65,16 +65,16 @@ jobs:
       - name: Decode release keystore
         if: steps.check.outputs.skip != 'true'
         env:
-          AERIAL_KEYSTORE_BASE64: ${{ secrets.AERIAL_KEYSTORE_BASE64 }}
-          AERIAL_KEYSTORE_PASSWORD: ${{ secrets.AERIAL_KEYSTORE_PASSWORD }}
-          AERIAL_KEY_ALIAS: ${{ secrets.AERIAL_KEY_ALIAS }}
-          AERIAL_KEY_PASSWORD: ${{ secrets.AERIAL_KEY_PASSWORD }}
+          AERIAL_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          AERIAL_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          AERIAL_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          AERIAL_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           if [ -z "$AERIAL_KEYSTORE_BASE64" ] ||
              [ -z "$AERIAL_KEYSTORE_PASSWORD" ] ||
              [ -z "$AERIAL_KEY_ALIAS" ] ||
              [ -z "$AERIAL_KEY_PASSWORD" ]; then
-            echo "All AERIAL_KEYSTORE_* signing secrets are required." >&2
+            echo "All ANDROID_KEYSTORE_* signing secrets are required." >&2
             exit 1
           fi
           printf '%s' "$AERIAL_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/aerial-release.jks"
@@ -85,9 +85,9 @@ jobs:
         if: steps.check.outputs.skip != 'true'
         env:
           AERIAL_KEYSTORE_FILE: ${{ runner.temp }}/aerial-release.jks
-          AERIAL_KEYSTORE_PASSWORD: ${{ secrets.AERIAL_KEYSTORE_PASSWORD }}
-          AERIAL_KEY_ALIAS: ${{ secrets.AERIAL_KEY_ALIAS }}
-          AERIAL_KEY_PASSWORD: ${{ secrets.AERIAL_KEY_PASSWORD }}
+          AERIAL_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          AERIAL_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          AERIAL_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           AERIAL_BUILD_CHANNEL: nightly
         run: ./gradlew assembleRelease
 
